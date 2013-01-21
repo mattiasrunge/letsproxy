@@ -14,7 +14,8 @@ This is a small node application which sets up a node proxy to allow different h
 
 ## Run the installation
 
-    $ sudo ./node-proxy/install.sh
+    $ cd ./node-proxy
+    $ sudo ./install.sh
 
 
 ## Customize the configuration file
