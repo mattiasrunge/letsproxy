@@ -1,11 +1,11 @@
-# node-proxy
+# mproxy.js
 
 When implementing an application in node.js which should be accessable to a browser via port 80 and you already have say an Apache installation you want to keep.
 Then this is proxy might be useful to you, it will listen to port 80 and based on the virtual host name direct the request to another server on another port.
 This other server might be another node.js application or an Apache server. The benefit of using this proxy is that it supports websockets. Some tips on how to switch Apache to another port than 80 are drescribed later in the guide.
 
 
-## If you have an old Ubuntu installation you might get a old node.js, to fix that run this first
+## If node.js is old try this
 
     $ sudo apt-add-repository http://ppa.launchpad.net/chris-lea/node.js/ubuntu
     $ sudo aptitude update
@@ -16,25 +16,22 @@ This other server might be another node.js application or an Apache server. The 
     $ sudo apt-get install nodejs npm
 
 
-## Fork the repo
+## Install mproxy.js
 
-    $ git clone https://github.com/mattiasrunge/node-proxy.git
-
-
-## Run the installation
-
-    $ cd ./node-proxy
-    $ sudo ./install.sh
+    $ git clone https://github.com/mattiasrunge/mproxy.js.git
+    $ cd mproxy.js
+    $ sudo npm install . -g
 
 
 ## Customize the configuration file
 
-    $ sudo emacs /etc/node-proxy.json
+    $ sudo mproxy --init
+    $ sudo emacs /etc/mproxy.json
 
 
-## Start the service
+## Set the proxy to autostart
 
-    $ sudo service node-proxy start
+    $ sudo mproxy --autostart on
  
  
 # How to set Apache to another port than 80

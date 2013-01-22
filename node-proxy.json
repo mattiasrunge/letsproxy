@@ -1,7 +1,0 @@
-{
-  "port"  : 80,
-  "paths" : {
-    "site1.example.com" : "localhost:8000",
-    "site2.example.com" : "localhost:8080"
-  }
-}

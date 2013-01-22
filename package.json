@@ -1,10 +1,21 @@
 {
-  "name"        : "index.js",
+  "name"        : "mproxy.js",
   "version"     : "1.0.0",
-  "description" : "",
+  "description" : "This application starts a http proxy and provides a command line interface for handling it under Ubuntu.",
   "author"      : "Mattias Runge <mattias@runge.se>",
-  "dependencies": { "http-proxy": ">= 0.8.3" },
-  "engines"     : { "node": ">= 0.8.0" },
-  "main"        : "index.js",
-  "license"     : "GPLv2"
+  "preferGlobal": true,
+  "dependencies": {
+    "http-proxy": ">= 0.8.3"
+  },
+  "engines"     : {
+    "node": ">= 0.8.0"
+  },
+  "bin"         : {
+    "mproxy": "./mproxy.bin.js"
+  },
+  "license"     : "GPLv2",
+  "repository"  : {
+    "type"  : "git",
+    "url"   : "https://github.com/mattiasrunge/mproxy.js.git"
+  }
 }
