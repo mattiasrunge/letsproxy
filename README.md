@@ -32,6 +32,11 @@ This other server might be another node.js application or an Apache server. The 
 ## Set the proxy to autostart
 
     $ sudo mproxy --autostart on
+
+
+## Start service
+
+    $ sudo service mproxy start
  
  
 # How to set Apache to another port than 80

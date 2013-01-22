@@ -184,7 +184,7 @@ function toggleAutostart(mode)
     }
     else if (mode === "on")
     {
-      var startString = "exec node-proxy\n";
+      var startString = "exec mproxy\n";
 
       fs.writeFile(serviceFile, startString, function(error)
       {
