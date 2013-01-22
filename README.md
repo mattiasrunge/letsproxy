@@ -1,8 +1,15 @@
 # mproxy.js
 
-When implementing an application in node.js which should be accessable to a browser via port 80 and you already have say an Apache installation you want to keep.
-Then this is proxy might be useful to you, it will listen to port 80 and based on the virtual host name direct the request to another server on another port.
-This other server might be another node.js application or an Apache server. The benefit of using this proxy is that it supports websockets. Some tips on how to switch Apache to another port than 80 are drescribed later in the guide.
+mproxy.js is an easy to use proxy for http data traffic. It listens to a port and then decides where to forward the request based on the virtual host name included in the request.
+
+
+mproxy.js basically implements a simple CLI on top of the node module http-proxy. The goal is to make it easy to set up a proxy on a system and have it autostart and configurable. This application is intended to be used in a Ubuntu environment and some of the features depend on the Ubuntu service framework.
+
+
+One use case for this proxy could be that you already have an Apache webserver up and running and want to keep that for some hosts. But at the same time you wants to have some host go to a specific node application. Since both Apache and your node application can not listen to port 80 at the same time a proxy is needed.
+The solution could then be to move the Apache port to 8000 and running your node application on port 8080. The proxy can then be configured to forward requests on one hostname to Apache and others to the node application.
+
+Some tips on what to change in Apache to make it use another port can be found later in this document.
 
 
 ## If node.js is old try this
@@ -28,6 +35,8 @@ This other server might be another node.js application or an Apache server. The 
     $ sudo mproxy --init
     $ sudo emacs /etc/mproxy.json
 
+In the sample configuration created with --init describes two dummy paths with a virtual hostname and a forward path consisting of a hostname and a port.
+
 
 ## Set the proxy to autostart
 
@@ -39,14 +48,14 @@ This other server might be another node.js application or an Apache server. The 
     $ sudo service mproxy start
  
  
-# How to set Apache to another port than 80
+# How to set Apache to port 8000
 
-## Update /etc/apache2/ports.conf
+## Update the Apache ports config: /etc/apache2/ports.conf
     
     ports.conf:NameVirtualHost *:8000
     ports.conf:Listen 8000
     
-## Update a virtual host site
+## Update a virtual host site: /etc/apache2/sites-available/site1.example.com
 
-    sites-available/site1.example.com:<VirtualHost *:8000>
+    <VirtualHost *:8000>
 
