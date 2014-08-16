@@ -1,5 +1,12 @@
 #!/usr/bin/env node
 
+/* Includes */
+var http = require("http");
+var httpProxy = require("http-proxy");
+var proxy = httpProxy.createProxy();
+var proxytable = require("proxytable");
+var routes = proxytable();
+
 /* Default variables */
 var command = "--run";
 var defaultConfigFile = "/etc/mproxy.json";
@@ -75,11 +82,24 @@ function startProxy(configFile)
 
     console.log("Proxy listening for connections on port " + config.port);
 
-    var httpProxy = require("http-proxy");
+    for (var name in config.paths) {
+      var port = config.paths[name].split(":")[1];
+      routes.proxy(name, proxytable.target(port));
+    }
 
-    httpProxy.createServer({
-      router: config.paths
-    }).listen(config.port);
+    var server = http.createServer(function(req, res) {
+      proxy.web(req, res, {
+        target: routes.findTarget(req)
+      });
+    });
+    
+    server.on("upgrade", function(req, socket, head) {
+      proxy.ws(req, socket, head, {
+        target: routes.findTarget(req)
+      });
+    });
+    
+    server.listen(config.port)
   });
 };
 
