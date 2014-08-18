@@ -14,68 +14,50 @@ var serviceFile = "/etc/init/mproxy.conf";
 
 
 /* Check command line argument */
-if (process.argv.length >= 3)
-{
+if (process.argv.length >= 3) {
   command = process.argv[2];
 }
 
 
 /* Run requested command */
-if (command === "--help")
-{
+if (command === "--help") {
   printHelp();
-}
-else if (command === "--autostart")
-{
+} else if (command === "--autostart") {
   toggleAutostart(process.argv[3]);
-}
-else if (command === "--init")
-{
+} else if (command === "--init") {
   createConfig(process.argv[3]);
-}
-else if (command === "--list")
-{
+} else if (command === "--list") {
   listConfig(process.argv[3]);
-}
-else if (command === "--run")
-{
+} else if (command === "--run") {
   startProxy(process.argv[3]);
-}
-else
-{
+} else {
   console.log("Unknown command: " + command);
   printHelp();
   process.exit(1);
 }
 
 
-function startProxy(configFile)
-{
-  if (!configFile)
-  {
+function startProxy(configFile) {
+  if (!configFile) {
     configFile = defaultConfigFile;
   }
 
   var fs = require("fs");
 
-  fs.exists(configFile, function(exists)
-  {
-    if (!exists)
-    {
+  fs.exists(configFile, function(exists) {
+    if (!exists) {
       console.error("Could not find the configuration file " + configFile + "!");
       process.exit(1);
     }
 
     var config = require(configFile);
 
-    if (!config.paths)
-    {
+    if (!config.paths) {
       console.error("Missing paths from configuration file " + configFile + "!");
       process.exit(1);
     }
 
-    if (!config.port)
-    {
+    if (!config.port) {
       console.error("Missing port from configuration file " + configFile + "!");
       process.exit(1);
     }
@@ -88,14 +70,31 @@ function startProxy(configFile)
     }
 
     var server = http.createServer(function(req, res) {
+      var target = routes.findTarget(req);
+      
+      if (!target) {
+        console.log("Could not find target for " + req.headers.host);
+        res.statusCode = 404;
+        res.end("No target");
+        return;
+      }
+      
       proxy.web(req, res, {
-        target: routes.findTarget(req)
+        target: target
       });
     });
     
     server.on("upgrade", function(req, socket, head) {
+      var target = routes.findTarget(req);
+      
+      if (!target) {
+        console.log("Could not find target for " + req.headers.host);
+        socket.end();
+        return;
+      }
+      
       proxy.ws(req, socket, head, {
-        target: routes.findTarget(req)
+        target: target
       });
     });
     
@@ -103,50 +102,41 @@ function startProxy(configFile)
   });
 };
 
-function listConfig(configFile)
-{
-  if (!configFile)
-  {
+function listConfig(configFile) {
+  if (!configFile) {
     configFile = defaultConfigFile;
   }
 
   var fs = require("fs");
 
-  fs.exists(configFile, function(exists)
-  {
-    if (!exists)
-    {
+  fs.exists(configFile, function(exists) {
+    if (!exists) {
       console.error("Could not find the configuration file " + configFile + "!");
       process.exit(1);
     }
 
     var config = require(configFile);
 
-    if (!config.paths)
-    {
+    if (!config.paths) {
       console.error("Missing paths from configuration file " + configFile + "!");
       process.exit(1);
     }
 
-    if (!config.port)
-    {
+    if (!config.port) {
       console.error("Missing port from configuration file " + configFile + "!");
       process.exit(1);
     }
 
     console.log("Found the following paths:");
     
-    for (var name in config.paths)
-    {
+    for (var name in config.paths) {
       console.log("  " + name + ":" + config.port + " => " + config.paths[name]);
     }
   });
 };
 
-function createConfig(configFile)
-{
-  if (!configFile)
-  {
+function createConfig(configFile) {
+  if (!configFile) {
     configFile = defaultConfigFile;
     console.error("No configuration file path was supplied, will write configuration to the default path.");
   }
@@ -160,18 +150,14 @@ function createConfig(configFile)
 
   var fs = require("fs");
 
-  fs.exists(configFile, function(exists)
-  {
-    if (exists)
-    {
+  fs.exists(configFile, function(exists) {
+    if (exists) {
       console.log(configFile + " already exists, you have to remove it first!");
       return;
     }
 
-    fs.writeFile(configFile, JSON.stringify(config, null, 2), function(error)
-    {
-      if (error)
-      {
+    fs.writeFile(configFile, JSON.stringify(config, null, 2), function(error) {
+      if (error) {
         console.error("Failed to write sample configuration to " + configFile + ", check your rights!");
         console.log(error);
         process.exit(1);
@@ -182,34 +168,24 @@ function createConfig(configFile)
   });
 };
 
-function toggleAutostart(mode)
-{
-  if (!mode || !(mode === "on" || mode === "off"))
-  {
+function toggleAutostart(mode) {
+  if (!mode || !(mode === "on" || mode === "off")) {
     console.error("Invalid or missing mode parameter, valid values are 'on' or 'off'!");
     process.exit(1);
   }
 
   var fs = require("fs");
 
-  fs.exists(serviceFile, function(exists)
-  {
-    if (exists && mode === "on")
-    {
+  fs.exists(serviceFile, function(exists) {
+    if (exists && mode === "on") {
       console.log("Autostart is already on!");
-    }
-    else if (!exists && mode === "off")
-    {
+    } else if (!exists && mode === "off") {
       console.log("Autostart is already off!");
-    }
-    else if (mode === "on")
-    {
+    } else if (mode === "on") {
       var startString = "exec mproxy\n";
 
-      fs.writeFile(serviceFile, startString, function(error)
-      {
-        if (error)
-        {
+      fs.writeFile(serviceFile, startString, function(error) {
+        if (error) {
           console.error("Failed to write service configuration to " + serviceFile + ", check your rights!");
           console.log(error);
           process.exit(1);
@@ -217,13 +193,9 @@ function toggleAutostart(mode)
 
         console.log("Turned proxy autostart on by writing " + serviceFile + ".");
       });
-    }
-    else if (mode === "off")
-    {
-      fs.unlink(serviceFile, function (error)
-      {
-        if (error)
-        {
+    } else if (mode === "off") {
+      fs.unlink(serviceFile, function (error) {
+        if (error) {
           console.error("Failed to remove service configuration to " + serviceFile + ", check your rights!");
           console.log(error);
           process.exit(1);
@@ -231,17 +203,14 @@ function toggleAutostart(mode)
 
         console.log("Turned proxy autostart off by removing " + serviceFile + ".");
       });
-    }
-    else
-    {
+    } else {
       console.error("Don't know what to do!");
       process.exit(1);
     }
   });
 };
 
-function printHelp()
-{
+function printHelp() {
   console.log("Usage: mproxy <command>");
   console.log("");
   console.log("  mproxy --help                 Print this help");
