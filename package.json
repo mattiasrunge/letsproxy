@@ -1,6 +1,6 @@
 {
   "name"        : "mproxy.js",
-  "version"     : "1.1.0",
+  "version"     : "1.1.1",
   "description" : "This application starts a http proxy and provides a command line interface for handling it under Ubuntu.",
   "author"      : "Mattias Runge <mattias@runge.se>",
   "preferGlobal": true,
