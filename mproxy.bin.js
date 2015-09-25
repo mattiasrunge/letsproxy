@@ -4,8 +4,6 @@
 var http = require("http");
 var httpProxy = require("http-proxy");
 var proxy = httpProxy.createProxy();
-var proxytable = require("proxytable");
-var routes = proxytable();
 
 /* Default variables */
 var command = "--run";
@@ -36,6 +34,10 @@ if (command === "--help") {
   process.exit(1);
 }
 
+process.on('uncaughtException', function(err) {
+    // handle the error safely
+    console.log(err);
+});
 
 function startProxy(configFile) {
   if (!configFile) {
@@ -64,40 +66,36 @@ function startProxy(configFile) {
 
     console.log("Proxy listening for connections on port " + config.port);
 
-    for (var name in config.paths) {
-      var port = config.paths[name].split(":")[1];
-      routes.proxy(name, proxytable.target(port));
-    }
-
     var server = http.createServer(function(req, res) {
-      var target = routes.findTarget(req);
-      
-      if (!target) {
+
+      if (!config.paths[req.headers.host]) {
         console.log("Could not find target for " + req.headers.host);
         res.statusCode = 404;
         res.end("No target");
         return;
       }
-      
+
+      //console.log("get", req.headers.host, "=>", config.paths[req.headers.host]);
+
       proxy.web(req, res, {
-        target: target
+        target: "http://" + config.paths[req.headers.host]
       });
     });
-    
+
     server.on("upgrade", function(req, socket, head) {
-      var target = routes.findTarget(req);
-      
-      if (!target) {
+      if (!config.paths[req.headers.host]) {
         console.log("Could not find target for " + req.headers.host);
         socket.end();
         return;
       }
-      
+
+      //console.log("upgrade", req.headers.host, "=>", config.paths[req.headers.host]);
+
       proxy.ws(req, socket, head, {
-        target: target
+        target: "http://" + config.paths[req.headers.host]
       });
     });
-    
+
     server.listen(config.port)
   });
 };
@@ -128,7 +126,7 @@ function listConfig(configFile) {
     }
 
     console.log("Found the following paths:");
-    
+
     for (var name in config.paths) {
       console.log("  " + name + ":" + config.port + " => " + config.paths[name]);
     }
@@ -216,7 +214,7 @@ function printHelp() {
   console.log("  mproxy --help                 Print this help");
   console.log("  mproxy --init [filepath]      Create an initial configuration");
   console.log("  mproxy --list [filepath]      List paths in configuration");
-  console.log("  mproxy --autostart <on/off>   Set the proxy to autostart or not, Ubuntu only"); 
+  console.log("  mproxy --autostart <on/off>   Set the proxy to autostart or not, Ubuntu only");
   console.log("  mproxy [--run] [filepath]     Start the proxy server using the filepath configuration");
   console.log("");
 };
