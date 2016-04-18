@@ -50,4 +50,4 @@ https
         target: "http://" + config.paths[request.headers.host]
     });
 })
-.listen(443)
+.listen(443);
