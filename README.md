@@ -22,6 +22,9 @@ cd letsencrypt
 ```bash
 letsencrypt-auto certonly --standalone -d example.com -d www.example.com
 # Make sure /etc/letsencrypt is read and writable by the user running mproxy.js
+
+# Print information about certificate
+openssl x509 -in /etc/letsencrypt/live/example.com/cert.pem -text -noout
 ```
 
 ## Create configuration
