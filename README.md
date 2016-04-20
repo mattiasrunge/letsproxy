@@ -1,8 +1,16 @@
-# mproxy.js
+# letsproxy
 
-mproxy.js is an easy to use proxy for http data traffic. It listens to port 80 and 443 and then decides where to forward the request based on the virtual host name included in the request.
+letsproxy is an easy to use proxy for shttp data traffic using [Let's Encrypt](https://letsencrypt.org/) certificates.
+
+## Features
+* Redirectes requests to http (port 80) to https (port 443)
+* Automatically update certificates
+* Support websockets
+* Proxy target defined in a configuration file
 
 ## Give node access to use port 80 and 443
+Since the proxy needs to listen to port 80 and port 443 which both are below 1024 the node process needs special privileges to avoid having to run as root. These privileges can be given to the node binary using the following command.
+**Please note** that this will give all node processes this privileges.
 
 ```bash
 # Not that the node path might be a symlink, you must find the real path
@@ -21,14 +29,17 @@ cd letsencrypt
 ## Create certificates
 ```bash
 letsencrypt-auto certonly --standalone -d example.com -d www.example.com
-# Make sure /etc/letsencrypt is read and writable by the user running mproxy.js
 
 # Print information about certificate
 openssl x509 -in /etc/letsencrypt/live/example.com/cert.pem -text -noout
+
+# /etc/letsencrypt needs to be read and writable as the user running letsproxy
+sudo chmod g+rwx /etc/letsencrypt -R
+sudo chmod root:$USER /etc/letsencrypt -R
 ```
 
 ## Create configuration
-```/etc/mproxy.json```
+```/etc/letsproxy.json```
 ```json
 {
   "https": {
@@ -43,3 +54,10 @@ openssl x509 -in /etc/letsencrypt/live/example.com/cert.pem -text -noout
 }
 ```
 
+## Run letsproxy
+```bash
+node ./index.js --config /etc/letsproxy.json
+
+# Or if running PM2
+pm2 start "./index --config /etc/letsproxy.json" -name LetsProxy
+```
