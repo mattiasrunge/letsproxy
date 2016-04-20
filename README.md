@@ -42,7 +42,8 @@ sudo ln -s /etc/letsencrypt/live/example.com /etc/letsencrypt/live/www.example.c
 ```
 
 ## Create configuration
-```/etc/letsproxy.json```
+/etc/letsproxy.json
+
 ```json
 {
   "https": {

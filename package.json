@@ -1,6 +1,6 @@
 {
   "name": "letsproxy",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "An https proxy using Let's Encrypt certificates",
   "author": "Mattias Runge <mattias@runge.se>",
   "preferGlobal": true,
@@ -24,5 +24,13 @@
   "bugs": {
     "url": "https://github.com/mattiasrunge/letsproxy/issues"
   },
-  "homepage": "https://github.com/mattiasrunge/letsproxy#readme"
+  "homepage": "https://github.com/mattiasrunge/letsproxy#readme",
+  "keywords": [
+    "proxy",
+    "https",
+    "ws",
+    "http",
+    "cert",
+    "letsencrypt"
+  ]
 }
