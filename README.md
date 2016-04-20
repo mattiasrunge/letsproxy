@@ -1,6 +1,6 @@
 # letsproxy
 
-letsproxy is an easy to use proxy for shttp data traffic using [Let's Encrypt](https://letsencrypt.org/) certificates.
+letsproxy is an easy to use proxy for https data traffic using [Let's Encrypt](https://letsencrypt.org/) certificates.
 
 ## Features
 * Redirectes requests to http (port 80) to https (port 443)
