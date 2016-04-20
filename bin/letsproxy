@@ -4,4 +4,4 @@ set +v
 
 DIR=$(dirname "$0")
 
-node $DIR/../lib/main.js
+node $DIR/../lib/main.js $@
