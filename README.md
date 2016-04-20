@@ -63,5 +63,5 @@ sudo ln -s /etc/letsencrypt/live/example.com /etc/letsencrypt/live/www.example.c
 ./bin/letsproxy
 
 # Or if running PM2
-pm2 start ./bin/letsproxy -name LetsProxy
+pm2 start ./lib/main.js --name LetsProxy
 ```
