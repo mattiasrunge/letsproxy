@@ -36,6 +36,9 @@ openssl x509 -in /etc/letsencrypt/live/example.com/cert.pem -text -noout
 # /etc/letsencrypt needs to be read and writable as the user running letsproxy
 sudo chmod g+rwx /etc/letsencrypt -R
 sudo chmod root:$USER /etc/letsencrypt -R
+
+# It also seems that you have to symlink the main certificate for all subdomains (Probably letsproxy does something wrong...)
+sudo ln -s /etc/letsencrypt/live/example.com /etc/letsencrypt/live/www.example.com
 ```
 
 ## Create configuration
