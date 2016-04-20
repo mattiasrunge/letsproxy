@@ -60,8 +60,8 @@ sudo ln -s /etc/letsencrypt/live/example.com /etc/letsencrypt/live/www.example.c
 
 ## Run letsproxy
 ```bash
-node ./index.js --config /etc/letsproxy.json
+./bin/letsproxy
 
 # Or if running PM2
-pm2 start "./index --config /etc/letsproxy.json" -name LetsProxy
+pm2 start ./bin/letsproxy -name LetsProxy
 ```
