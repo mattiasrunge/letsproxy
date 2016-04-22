@@ -30,12 +30,9 @@ cd letsencrypt
 ```bash
 letsencrypt-auto certonly --standalone -d example.com -d www.example.com
 
-# Print information about certificate
-openssl x509 -in /etc/letsencrypt/live/example.com/cert.pem -text -noout
-
 # /etc/letsencrypt needs to be read and writable as the user running letsproxy
 sudo chmod g+rwx /etc/letsencrypt -R
-sudo chmod root:$USER /etc/letsencrypt -R
+sudo chown root:$USER /etc/letsencrypt -R
 
 # It also seems that you have to symlink the main certificate for all subdomains (Probably letsproxy does something wrong...)
 sudo ln -s /etc/letsencrypt/live/example.com /etc/letsencrypt/live/www.example.com
@@ -64,4 +61,16 @@ sudo ln -s /etc/letsencrypt/live/example.com /etc/letsencrypt/live/www.example.c
 
 # Or if running PM2
 pm2 start ./lib/main.js --name LetsProxy
+```
+
+## Tips
+
+### Print information about certificate
+```bash
+openssl x509 -in /etc/letsencrypt/live/example.com/cert.pem -text -noout
+```
+
+### Blocking an external port but allow localhost
+```bash
+iptables -A INPUT ! -s 127.0.0.1 -p tcp -m tcp --dport 8080 -j DROP
 ```

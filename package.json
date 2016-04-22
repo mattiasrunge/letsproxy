@@ -1,7 +1,7 @@
 {
   "name": "letsproxy",
-  "version": "0.0.3",
-  "description": "An https proxy using Let's Encrypt certificates",
+  "version": "0.0.4",
+  "description": "A https proxy using Let's Encrypt certificates",
   "author": "Mattias Runge <mattias@runge.se>",
   "preferGlobal": true,
   "dependencies": {
